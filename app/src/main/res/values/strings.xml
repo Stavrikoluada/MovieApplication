@@ -11,4 +11,7 @@
     <string name="actor_2">Chris Evans</string>
     <string name="actor_3">Mark Ruffalo</string>
     <string name="actor_4">Chris Hemsworth</string>
+    <string name="time_fragment">137 MIN</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
