@@ -41,11 +41,18 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.volley)
+    implementation(libs.picasso)
+    implementation(libs.fragmentKtx)
+    implementation(libs.playServicesLocation)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
+    implementation(libs.androidx.tools.core)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.media3.common.ktx)
 }
+
