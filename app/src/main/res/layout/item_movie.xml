@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="170dp"
+    android:layout_height="296dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/share_fragment"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/iv_back_fon_fragment"
+        android:layout_width="500dp"
+        android:layout_height="248dp"
+        android:layout_gravity="center|top"
+        android:foreground="@drawable/share_background_image"
+        android:src="@drawable/background_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.46"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/share_fragment_icon"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/age_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/age_"
+            android:textSize="5pt"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/time_fragment"
+        android:textSize="4pt"
+        android:textColor="@color/text_gray"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+    <TextView
+        android:id="@+id/tv_title_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_movie"
+        android:textSize="6pt"
+        android:textColor="@color/white"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:paddingTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_time"
+        app:layout_constraintEnd_toEndOf="@+id/tv_time"
+        app:layout_constraintBottom_toTopOf="@+id/tv_time"/>
+
+
+
+
+    <ImageView
+        android:id="@+id/star_1f"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:src="@drawable/star_red"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tv_title_fragment" />
+    <ImageView
+        android:id="@+id/star_2f"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:src="@drawable/star_red"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="2dp"
+        app:layout_constraintStart_toEndOf="@id/star_1f"
+        app:layout_constraintBottom_toTopOf="@+id/tv_title_fragment" />
+    <ImageView
+        android:id="@+id/star_3f"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:src="@drawable/star_red"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="2dp"
+        app:layout_constraintStart_toEndOf="@id/star_2f"
+        app:layout_constraintBottom_toTopOf="@+id/tv_title_fragment" />
+    <ImageView
+        android:id="@+id/star_4f"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:src="@drawable/star_red"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="2dp"
+        app:layout_constraintStart_toEndOf="@id/star_3f"
+        app:layout_constraintBottom_toTopOf="@+id/tv_title_fragment" />
+    <ImageView
+        android:id="@+id/star_5f"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:src="@drawable/star_gray"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="2dp"
+        app:layout_constraintStart_toEndOf="@id/star_4f"
+        app:layout_constraintBottom_toTopOf="@+id/tv_title_fragment"/>
+    <TextView
+        android:id="@+id/star_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/icon"
+        android:textSize="4pt"
+        android:layout_marginStart="2dp"
+        app:layout_constraintStart_toEndOf="@id/star_5f"
+        app:layout_constraintTop_toTopOf="@id/star_1f"
+        app:layout_constraintBottom_toBottomOf="@id/star_1f"/>
+
+
+
+    <TextView
+        android:id="@+id/tv_genre_movie"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/genre_movie"
+        android:textSize="4pt"
+        android:textColor="@color/text_red"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/star_text"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
