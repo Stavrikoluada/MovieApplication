@@ -6,6 +6,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movieapplication.adapters.MainMovieAdapter
@@ -14,63 +16,43 @@ import com.example.movieapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
-    private var adapter: MainMovieAdapter? = null
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var adapter: MainMovieAdapter
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
+
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rc_view)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        init()
 
+        initRecyclerView()
+
+        // Наблюдаем за изменениями в данных фильмов
+        viewModel.movies.observe(this, Observer { movies ->
+            // Обновляем адаптер данными
+            adapter.submitList(movies)
+        })
+        // Загружаем данные о фильмах
+        viewModel.loadMovies()
     }
 
-    private fun init() {
-        binding.apply {
-            rcView.layoutManager = GridLayoutManager(this@MainActivity, 2)
-            adapter = MainMovieAdapter { item ->
-                val intent = Intent(this@MainActivity, MovieDetailsActivity::class.java)
-                intent.putExtra("MOVIE_ID", item.title)
-                startActivity(intent)
-            }
-            rcView.adapter = adapter
+    private fun initRecyclerView() {
+        binding.rcView.layoutManager = GridLayoutManager(this, 2)
+        adapter = MainMovieAdapter { movie ->
+            val intent = Intent(this, MovieDetailsActivity::class.java)
+            intent.putExtra("MOVIE_ID", movie.title)
+            startActivity(intent)
         }
-
-        val movieModel1 = MovieModel(
-            "15",
-            "Comedi",
-            "One one",
-            "100",
-            "30",
-            8
-        )
-        val movieModel2 = MovieModel(
-            "18",
-            "Dramma",
-            "My Home",
-            "80",
-            "20",
-            4
-        )
-        val movieModel3 = MovieModel(
-            "1",
-            "Merrrrgrgdg fgfdbd fbbdfb",
-            "Aple fdkjdfhjvb dhfjgbhfdb fb",
-            "20",
-            "2000",
-            1
-        )
-
-        adapter?.addMovie(movieModel1)
-        adapter?.addMovie(movieModel2)
-        adapter?.addMovie(movieModel3)
+        binding.rcView.adapter = adapter
     }
 }
