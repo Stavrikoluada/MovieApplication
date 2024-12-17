@@ -4,16 +4,16 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movieapplication.R
 import com.example.movieapplication.data.MovieModel
 import com.example.movieapplication.databinding.ItemMovieBinding
 import com.squareup.picasso.Picasso
 
-class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit): RecyclerView.Adapter<MainMovieAdapter.ViewHolder>() {
-
-    //Test
-    var movieList = ArrayList<MovieModel>()
+class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit) :
+        ListAdapter<MovieModel, MainMovieAdapter.ViewHolder>(MovieDiffCallback()) {
 
     class ViewHolder(item: View, private val clickListener: (MovieModel) -> Unit): RecyclerView.ViewHolder(item) {
         val binding = ItemMovieBinding.bind(item)
@@ -56,18 +56,19 @@ class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit): Recycle
         return ViewHolder(view, clickListener)
     }
 
-    override fun getItemCount(): Int {
-        return movieList.size
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(movieList[position])
+        holder.bind(getItem(position))
     }
 
+    class MovieDiffCallback : DiffUtil.ItemCallback<MovieModel>() {
+        override fun areItemsTheSame(oldItem: MovieModel, newItem: MovieModel): Boolean {
+            // Сравниваем по уникальному идентификатору (например, id или title)
+            return oldItem.title == newItem.title
+        }
 
-    fun addMovie(movieModel: MovieModel) {
-        movieList.add(movieModel)
-        notifyDataSetChanged()
+        override fun areContentsTheSame(oldItem: MovieModel, newItem: MovieModel): Boolean {
+            // Проверка на одинаковые данные
+            return oldItem == newItem
+        }
     }
-
 }
