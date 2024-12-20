@@ -1,11 +1,14 @@
 package com.example.movieapplication.data
 
 data class MovieModel(
-    /*val imageUrl: String,*/
-    val ageMin: String,
-    val genres: String,
+    val id: Long,
     val title: String,
-    val time: String,
-    val reviews: String,
-    val starCount: Int,
+    val overview: String,
+    val poster: String?,
+    val backdrop: String?,
+    val ratings: Float,
+    val numberOfRatings: Long,
+    val minimumAge: Int,
+    val like: Boolean,
+    val genres: String,
 )

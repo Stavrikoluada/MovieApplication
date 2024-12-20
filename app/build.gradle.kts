@@ -56,5 +56,10 @@ dependencies {
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
-}
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit.gson.converter)
+    implementation(libs.gson)
+    implementation(libs.okhttp3.logging.interceptor)
 
+}

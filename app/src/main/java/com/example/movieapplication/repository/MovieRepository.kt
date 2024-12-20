@@ -1,36 +1,32 @@
 package com.example.movieapplication.repository
 
+import android.util.Log
+import com.example.movieapplication.api.MoviesApi
 import com.example.movieapplication.data.MovieModel
 
-class MovieRepository {
-    fun getMovies(): List<MovieModel> {
-        // Здесь вы можете выполнять запросы в базу данных или API.
-        // Фейковый список:
-        return listOf(
-            MovieModel(
-                "15",
-                "Comedi",
-                "One one",
-                "100",
-                "30",
-                8
-            ),
-            MovieModel(
-                "18",
-                "Dramma",
-                "My Home",
-                "80",
-                "20",
-                4
-            ),
-            MovieModel(
-                "1",
-                "Merrrrgrgdg fgfdbd fbbdfb",
-                "Aple fdkjdfhjvb dhfjgbhfdb fb",
-                "20",
-                "2000",
-                1
-            ),
-        )
+class MovieRepository(private val movieApi: MoviesApi) {
+
+    suspend fun getPopularMovies(apiKey: String): List<MovieModel> {
+        // Получаем популярные фильмы с использованием Retrofit
+        val response = movieApi.getPopularMovies(apiKey)
+        if (response.results == null) {
+            Log.e("MovieRepository", "No movies found")
+            return emptyList()
+        } else {
+            return response.results?.map { movieDto ->
+                MovieModel(
+                    id = movieDto.id,
+                    title = movieDto.title,
+                    overview = movieDto.overview,
+                    poster = "https://image.tmdb.org/t/p/w342${movieDto.posterPath}",
+                    backdrop = movieDto.backdropPath ?: "",
+                    ratings = movieDto.rating,
+                    numberOfRatings = movieDto.ratingCount,
+                    minimumAge = if (movieDto.adult) 16 else 13,
+                    like = false,
+                    genres = movieDto.genreIDS?.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "No genres"
+                )
+            } ?: emptyList()
+        }
     }
 }

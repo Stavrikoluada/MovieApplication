@@ -2,6 +2,7 @@ package com.example.movieapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -11,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movieapplication.adapters.MainMovieAdapter
-import com.example.movieapplication.data.MovieModel
+import com.example.movieapplication.api.provideMovieRepository
+import com.example.movieapplication.api.provideMoviesApi
+import com.example.movieapplication.api.provideRetrofit
 import com.example.movieapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -27,13 +30,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rc_view)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        // Инициализируем ViewModel
+        val retrofit = provideRetrofit()
+        val moviesApi = provideMoviesApi(retrofit)
+        val movieRepository = provideMovieRepository(moviesApi)
+        viewModel = ViewModelProvider(this, MainViewModel.MainViewModelFactory(movieRepository))
+            .get(MainViewModel::class.java)
 
         initRecyclerView()
 
@@ -42,8 +44,10 @@ class MainActivity : AppCompatActivity() {
             // Обновляем адаптер данными
             adapter.submitList(movies)
         })
+
         // Загружаем данные о фильмах
-        viewModel.loadMovies()
+        val apiKey = "e47bdf1afdfecf01d05bec8e7ed9db25"
+        viewModel.loadMovies(apiKey)
     }
 
     private fun initRecyclerView() {
@@ -51,8 +55,10 @@ class MainActivity : AppCompatActivity() {
         adapter = MainMovieAdapter { movie ->
             val intent = Intent(this, MovieDetailsActivity::class.java)
             intent.putExtra("MOVIE_ID", movie.title)
+            intent.putExtra("MOVIE_ID", movie.title)
             startActivity(intent)
         }
         binding.rcView.adapter = adapter
     }
 }
+
