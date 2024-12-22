@@ -1,42 +1,59 @@
 package com.example.movieapplication.data
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResultMoviesDto(
-    val results: List<MoviesDto>?
+    val dates: DatesDto,
+    val page: Int,
+    val results: List<MoviesDto>
+)
+
+@Serializable
+data class DatesDto(
+    val maximum: String,
+    val minimum: String
 )
 
 @Serializable
 data class MoviesDto(
+    @SerializedName("id")
     val id: Long,
+
+    @SerializedName("adult")
     val adult: Boolean,
 
-    @SerialName("backdrop_path")
+    @SerializedName("backdrop_path")
     val backdropPath: String?,
 
-    @SerialName("genre_ids")
+    @SerializedName("genre_ids")
     val genreIDS: List<Long>,
 
-    @SerialName("original_language")
+    @SerializedName("original_language")
     val originalLanguage: String,
 
-    @SerialName("original_title")
+    @SerializedName("original_title")
     val originalTitle: String,
 
+    @SerializedName("overview")
     val overview: String,
+
+    @SerializedName("popularity")
     val popularity: Double,
 
-    @SerialName("poster_path")
+    @SerializedName("poster_path")
     val posterPath: String?,
 
+    @SerializedName("title")
     val title: String,
+
+    @SerializedName("video")
     val video: Boolean,
 
-    @SerialName("vote_average")
+    @SerializedName("vote_average")
     val rating: Float,
 
-    @SerialName("vote_count")
+    @SerializedName("vote_count")
     val ratingCount: Long,
 )

@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         adapter = MainMovieAdapter { movie ->
             val intent = Intent(this, MovieDetailsActivity::class.java)
             intent.putExtra("MOVIE_ID", movie.title)
-            intent.putExtra("MOVIE_ID", movie.title)
             startActivity(intent)
         }
         binding.rcView.adapter = adapter

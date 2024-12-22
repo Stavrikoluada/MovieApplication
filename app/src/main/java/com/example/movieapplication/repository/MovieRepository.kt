@@ -2,6 +2,7 @@ package com.example.movieapplication.repository
 
 import android.util.Log
 import com.example.movieapplication.api.MoviesApi
+import com.example.movieapplication.data.MovieGenresModel
 import com.example.movieapplication.data.MovieModel
 
 class MovieRepository(private val movieApi: MoviesApi) {
@@ -21,10 +22,27 @@ class MovieRepository(private val movieApi: MoviesApi) {
                     poster = "https://image.tmdb.org/t/p/w342${movieDto.posterPath}",
                     backdrop = movieDto.backdropPath ?: "",
                     ratings = movieDto.rating,
-                    numberOfRatings = movieDto.ratingCount,
+                    ratingCount = movieDto.ratingCount,
                     minimumAge = if (movieDto.adult) 16 else 13,
                     like = false,
                     genres = movieDto.genreIDS?.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "No genres"
+                )
+
+            } ?: emptyList()
+        }
+    }
+
+    suspend fun getPopularMoviesGenres(apiKey: String): List<MovieGenresModel> {
+
+        val responseGenr = movieApi.getPopularMoviesGenres(apiKey)
+        if (responseGenr.resultsGenres == null) {
+            Log.e("MovieRepository", "No movies found")
+            return emptyList()
+        } else {
+            return responseGenr.resultsGenres?.map { movieDto ->
+                MovieGenresModel(
+                    id = movieDto.id,
+                    name = movieDto.name,
                 )
             } ?: emptyList()
         }

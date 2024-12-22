@@ -7,7 +7,7 @@ data class MovieModel(
     val poster: String?,
     val backdrop: String?,
     val ratings: Float,
-    val numberOfRatings: Long,
+    val ratingCount: Long,
     val minimumAge: Int,
     val like: Boolean,
     val genres: String,

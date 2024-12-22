@@ -20,14 +20,14 @@ class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit) :
         @SuppressLint("SetTextI18n")
         fun bind(movieModel: MovieModel) = with(binding) {
 
-            Picasso.get().load("https:" + movieModel.poster)
-                //.transform(RoundedCornersTransformation(10, 0))
+            Picasso.get().load("https://image.tmdb.org/t/p/w500/" + movieModel.poster)
+                .transform(RoundedCornersTransformation(20f))
                 .into(ivBackFragm)
             ageFragment.text = "${movieModel.minimumAge}+"
             tvGenreMovie.text = movieModel.genres
             tvTitleFragment.text = movieModel.title
             //tvTime.text = movieModel.time
-            starText.text = "${movieModel.numberOfRatings} Reviews"
+            starText.text = "${movieModel.ratingCount} Reviews"
             setStar(movieModel.ratings.toInt())
 
             root.setOnClickListener { clickListener(movieModel) }
@@ -67,7 +67,6 @@ class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit) :
         override fun areItemsTheSame(oldItem: MovieModel, newItem: MovieModel): Boolean {
             // Сравниваем по уникальному идентификатору (например, id или title)
             return oldItem.title == newItem.title
-//            return oldItem.title == newItem.title
         }
 
         override fun areContentsTheSame(oldItem: MovieModel, newItem: MovieModel): Boolean {
