@@ -9,13 +9,12 @@ interface MoviesApi {
 
     @GET("movie/popular")
     suspend fun getPopularMovies(
-        @Query("api_key")
-        apiKey: String
+        @Query("api_key") apiKey: String
     ): ResultMoviesDto
 
     @GET("genre/movie/list")
     suspend fun getPopularMoviesGenres(
-        @Query("api_key")
-        apiKey: String
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String = "en"
     ): ResultGenresDto
 }

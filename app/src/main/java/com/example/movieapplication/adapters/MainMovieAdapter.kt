@@ -23,7 +23,7 @@ class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit) :
             Picasso.get().load("https://image.tmdb.org/t/p/w500/" + movieModel.poster)
                 .transform(RoundedCornersTransformation(20f))
                 .into(ivBackFragm)
-            ageFragment.text = "${movieModel.minimumAge}+"
+            ageFragment.text = "${if (movieModel.minimumAge) 16 else 13}+"
             tvGenreMovie.text = movieModel.genres
             tvTitleFragment.text = movieModel.title
             //tvTime.text = movieModel.time

@@ -20,6 +20,7 @@ class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() 
         viewModelScope.launch {
             try {
                 Log.d("MainViewModel", "Loading popular movies...")
+                movieRepository.updateGenresMap(apiKey)
                 val movieList = movieRepository.getPopularMovies(apiKey)
                 _movies.postValue(movieList)
                 Log.d("MainViewModel", "Movies loaded, total count: ${movieList.size}")
