@@ -12,7 +12,7 @@ class RoundedCornersTransformation(private val radius: Float) : Transformation {
         val output = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(output)
         val paint = Paint()
-        val rect = RectF(0f, 0f, source.width.toFloat(), source.height.toFloat())
+        val rect = RectF(0f, 0f, source.width.toFloat( ), source.height.toFloat())
 
         paint.isAntiAlias = true
         canvas.drawRoundRect(rect, radius, radius, paint)
@@ -20,7 +20,7 @@ class RoundedCornersTransformation(private val radius: Float) : Transformation {
 
         canvas.drawBitmap(source, 0f, 0f, paint)
         if (source != output) {
-            source.recycle()  // Освобождаем исходный Bitmap
+            source.recycle()
         }
         return output
     }

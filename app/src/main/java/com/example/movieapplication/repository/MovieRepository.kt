@@ -6,24 +6,21 @@ import com.example.movieapplication.data.MovieModel
 
 class MovieRepository(private val movieApi: MoviesApi) {
 
-    private var genresMap: Map<Int, String> = emptyMap()
+    private var genresMap: MutableMap<Int, String> = mutableMapOf(28 to "Action")
 
     suspend fun updateGenresMap(apiKey: String) {
         try {
             val genresResponse = movieApi.getPopularMoviesGenres(apiKey)
-            genresMap = genresResponse.resultsGenres.associate { it.id to it.name }
+            genresMap = genresResponse.genres.associate { it.id to it.name }.toMutableMap()
         } catch (e: Exception) {
             println("Error fetching genres: ${e.message}")
         }
     }
 
     suspend fun getPopularMovies(apiKey: String): List<MovieModel> {
-        if (genresMap.isEmpty()) {
-            updateGenresMap(apiKey)
-        }
-
         // Получаем список популярных фильмов
         val response = movieApi.getPopularMovies(apiKey)
+
         if (response.results == null) {
             Log.e("MovieRepository", "No movies found")
             return emptyList()

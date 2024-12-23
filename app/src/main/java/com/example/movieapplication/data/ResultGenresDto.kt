@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResultGenresDto(
-    val resultsGenres: List<GenresDto>
+    val genres: List<GenresDto>
 )
 @Serializable
 data class GenresDto(
