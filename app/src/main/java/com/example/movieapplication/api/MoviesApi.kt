@@ -1,8 +1,10 @@
 package com.example.movieapplication.api
 
+import com.example.movieapplication.data.ActorListDto
 import com.example.movieapplication.data.ResultGenresDto
 import com.example.movieapplication.data.ResultMoviesDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MoviesApi {
@@ -17,4 +19,10 @@ interface MoviesApi {
         @Query("api_key") apiKey: String,
         @Query("language") language: String = "en"
     ): ResultGenresDto
+
+    @GET("movie/{id}/credits")
+    suspend fun getActors(
+        @Path("id") id: Long,
+        @Query("api_key") apiKey: String,
+    ): ActorListDto
 }

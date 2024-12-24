@@ -1,6 +1,6 @@
 package com.example.movieapplication.data
 
-data class MovieGenresModel (
-    val id: Int,
+data class ActorsModel (
     val name: String,
+    val profilePath: String? = null,
 )

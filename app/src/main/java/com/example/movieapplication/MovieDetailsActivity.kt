@@ -2,10 +2,14 @@ package com.example.movieapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movieapplication.MainActivity.Companion.MOVIE_BACKDROP
 import com.example.movieapplication.MainActivity.Companion.MOVIE_GENRES
 import com.example.movieapplication.MainActivity.Companion.MOVIE_ID
@@ -14,12 +18,25 @@ import com.example.movieapplication.MainActivity.Companion.MOVIE_OVERVIEW
 import com.example.movieapplication.MainActivity.Companion.MOVIE_RATING
 import com.example.movieapplication.MainActivity.Companion.MOVIE_RATING_COUNT
 import com.example.movieapplication.MainActivity.Companion.MOVIE_TITLE
+import com.example.movieapplication.adapters.DetailsActorsAdapter
+import com.example.movieapplication.api.provideMovieRepository
+import com.example.movieapplication.api.provideMoviesApi
+import com.example.movieapplication.api.provideRetrofit
+import com.example.movieapplication.data.ActorsModel
 import com.example.movieapplication.databinding.ActivityMovieDetailsBinding
+import com.example.movieapplication.repository.MovieRepository
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MovieDetailsActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMovieDetailsBinding
+    private lateinit var movieRepository: MovieRepository // добавим репозиторий
+    private lateinit var apiKey: String
+    private lateinit var actorsAdapter: DetailsActorsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +73,30 @@ class MovieDetailsActivity : AppCompatActivity() {
         binding.btBack.setOnClickListener {
             finish()
         }
+
+        // Инициализируем репозиторий
+        val retrofit = provideRetrofit()
+        val moviesApi = provideMoviesApi(retrofit)
+        movieRepository = MovieRepository(moviesApi)
+
+        apiKey = "e47bdf1afdfecf01d05bec8e7ed9db25"
+
+        actorsAdapter = DetailsActorsAdapter(emptyList())
+
+        binding.rvActors.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvActors.adapter = actorsAdapter
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val actors = movieRepository.getActorsForId(movieId, apiKey)
+            withContext(Dispatchers.Main) {
+                actors?.let {
+                    actorsAdapter = DetailsActorsAdapter(it)
+                    binding.rvActors.adapter = actorsAdapter
+                }
+            }
+        }
     }
+
     private fun setStar(starCount: Int) = with(binding) {
         val normCount = starCount / 2
         if (normCount >= 1) {
@@ -75,4 +115,5 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
         }
     }
+
 }
