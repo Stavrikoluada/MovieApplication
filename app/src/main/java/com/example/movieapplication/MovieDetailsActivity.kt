@@ -19,11 +19,12 @@ import com.example.movieapplication.MainActivity.Companion.MOVIE_RATING
 import com.example.movieapplication.MainActivity.Companion.MOVIE_RATING_COUNT
 import com.example.movieapplication.MainActivity.Companion.MOVIE_TITLE
 import com.example.movieapplication.adapters.DetailsActorsAdapter
-import com.example.movieapplication.api.provideMovieRepository
+//import com.example.movieapplication.api.provideMovieRepository
 import com.example.movieapplication.api.provideMoviesApi
 import com.example.movieapplication.api.provideRetrofit
 import com.example.movieapplication.data.ActorsModel
 import com.example.movieapplication.databinding.ActivityMovieDetailsBinding
+import com.example.movieapplication.db.AppDatabase
 import com.example.movieapplication.repository.MovieRepository
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +38,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var movieRepository: MovieRepository // добавим репозиторий
     private lateinit var apiKey: String
     private lateinit var actorsAdapter: DetailsActorsAdapter
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +79,11 @@ class MovieDetailsActivity : AppCompatActivity() {
         // Инициализируем репозиторий
         val retrofit = provideRetrofit()
         val moviesApi = provideMoviesApi(retrofit)
-        movieRepository = MovieRepository(moviesApi)
+        val movieDao = AppDatabase.getDatabase(this).movieDao()
+        val genreDao = AppDatabase.getDatabase(this).genreDao()
+        movieRepository = MovieRepository(moviesApi, movieDao, genreDao)
+        viewModel = ViewModelProvider(this, MainViewModel.MainViewModelFactory(movieRepository))
+            .get(MainViewModel::class.java)
 
         apiKey = "e47bdf1afdfecf01d05bec8e7ed9db25"
 
@@ -87,11 +93,21 @@ class MovieDetailsActivity : AppCompatActivity() {
         binding.rvActors.adapter = actorsAdapter
 
         CoroutineScope(Dispatchers.IO).launch {
-            val actors = movieRepository.getActorsForId(movieId, apiKey)
-            withContext(Dispatchers.Main) {
-                actors?.let {
-                    actorsAdapter = DetailsActorsAdapter(it)
-                    binding.rvActors.adapter = actorsAdapter
+            if (viewModel.isNetworkAvailable(this@MovieDetailsActivity)) {
+                val actors = movieRepository.getActorsForId(movieId, apiKey)
+                withContext(Dispatchers.Main) {
+                    actors?.let {
+                        actorsAdapter = DetailsActorsAdapter(it)
+                        binding.rvActors.adapter = actorsAdapter
+                    }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    val actors: List<ActorsModel> = listOf(ActorsModel("", ""))
+                    actors?.let {
+                        actorsAdapter = DetailsActorsAdapter(it)
+                        binding.rvActors.adapter = actorsAdapter
+                    }
                 }
             }
         }

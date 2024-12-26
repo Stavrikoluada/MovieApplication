@@ -1,5 +1,7 @@
 package com.example.movieapplication
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,6 +18,23 @@ class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() 
     private val _movies = MutableLiveData<List<MovieModel>>()
     val movies: LiveData<List<MovieModel>> get() = _movies
 
+    fun loadMoviesFromList(moviesList: List<MovieModel>) {
+        _movies.postValue(moviesList.map { movieEntity ->
+            MovieModel(
+                id = movieEntity.id,
+                title = movieEntity.title,
+                overview = movieEntity.overview,
+                poster = movieEntity.poster,
+                backdrop = movieEntity.backdrop,
+                ratings = movieEntity.ratings,
+                ratingCount = movieEntity.ratingCount,
+                minimumAge = movieEntity.minimumAge,
+                like = movieEntity.like,
+                genres = movieEntity.genres
+            )
+        })
+    }
+
     fun loadMovies(apiKey: String) {
         viewModelScope.launch {
             try {
@@ -27,6 +46,21 @@ class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() 
             } catch (e: Exception) {
                 // Обработка ошибки, если запрос не удался
                 Log.e("MainViewModel", "Error loading movies", e)
+                val moviesFromDb = movieRepository.getMoviesFromDatabase()
+                _movies.postValue(moviesFromDb.map { movieEntity ->
+                    MovieModel(
+                        id = movieEntity.id,
+                        title = movieEntity.title,
+                        overview = movieEntity.overview,
+                        poster = movieEntity.poster,
+                        backdrop = movieEntity.backdrop,
+                        ratings = movieEntity.ratings,
+                        ratingCount = movieEntity.ratingCount,
+                        minimumAge = movieEntity.minimumAge,
+                        like = movieEntity.like,
+                        genres = movieEntity.genres
+                    )
+                })
             }
         }
     }
@@ -39,5 +73,11 @@ class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() 
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
+    }
+
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }

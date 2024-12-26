@@ -22,6 +22,6 @@ fun provideMoviesApi(retrofit: Retrofit): MoviesApi {
     return retrofit.create(MoviesApi::class.java)
 }
 
-fun provideMovieRepository(moviesApi: MoviesApi): MovieRepository {
-    return MovieRepository(moviesApi)
-}
+//fun provideMovieRepository(moviesApi: MoviesApi): MovieRepository {
+//    return MovieRepository(moviesApi)
+//}

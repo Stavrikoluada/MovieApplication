@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    kotlin("kapt")
 }
 
 android {
@@ -38,8 +39,8 @@ android {
     }
 }
 
-dependencies {
 
+dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.volley)
     implementation(libs.picasso)
@@ -61,5 +62,26 @@ dependencies {
     implementation(libs.retrofit.gson.converter)
     implementation(libs.gson)
     implementation(libs.okhttp3.logging.interceptor)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.room.ktx){
+        exclude(group = "com.intellij", module = "annotations")
+    }
+    implementation(libs.androidx.room.runtime){
+        exclude(group = "com.intellij", module = "annotations")
+    }
+    kapt(libs.kapt.room)
 
+    implementation(libs.androidx.lifecycle.runtime.ktx){
+         exclude(group = "com.intellij", module = "annotations")
+        }
+
+}
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if (requested.group == "org.jetbrains" && requested.name == "annotations") {
+                useVersion("23.0.0")
+            }
+        }
+    }
 }

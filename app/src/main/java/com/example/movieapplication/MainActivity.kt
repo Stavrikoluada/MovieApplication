@@ -12,13 +12,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movieapplication.adapters.MainMovieAdapter
-import com.example.movieapplication.api.provideMovieRepository
+//import com.example.movieapplication.api.provideMovieRepository
 import com.example.movieapplication.api.provideMoviesApi
 import com.example.movieapplication.api.provideRetrofit
+import com.example.movieapplication.data.MovieModel
 import com.example.movieapplication.databinding.ActivityMainBinding
+import com.example.movieapplication.db.AppDatabase
+import com.example.movieapplication.repository.MovieRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,16 +40,77 @@ class MainActivity : AppCompatActivity() {
         // Инициализируем ViewModel
         val retrofit = provideRetrofit()
         val moviesApi = provideMoviesApi(retrofit)
-        val movieRepository = provideMovieRepository(moviesApi)
+        val movieDao = AppDatabase.getDatabase(this).movieDao()
+        val genreDao = AppDatabase.getDatabase(this).genreDao()
+        val movieRepository = MovieRepository(moviesApi, movieDao, genreDao)
         viewModel = ViewModelProvider(this, MainViewModel.MainViewModelFactory(movieRepository))
             .get(MainViewModel::class.java)
 
         val apiKey = "e47bdf1afdfecf01d05bec8e7ed9db25"
 
         CoroutineScope(Dispatchers.IO).launch {
-            movieRepository.updateGenresMap(apiKey)
-            viewModel.loadMovies(apiKey)
+            if (viewModel.isNetworkAvailable(this@MainActivity)) {
+                // Выполняем запрос к API
+                movieRepository.updateGenresMap(apiKey)
+            }
+
+
+            val moviesFromDb = movieRepository.getMoviesFromDatabase()
+
+            if (moviesFromDb.isEmpty()) {
+                // Если данных нет в базе, загружаем из API
+                withContext(Dispatchers.Main) {
+                    if (viewModel.isNetworkAvailable(this@MainActivity)) {
+                        viewModel.loadMovies(apiKey)
+                    }
+
+                }
+            } else {
+                // Если данные есть, отображаем их
+                withContext(Dispatchers.IO) {
+                    viewModel.loadMoviesFromList(moviesFromDb.map { movieEntity ->
+                        MovieModel(
+                            id = movieEntity.id,
+                            title = movieEntity.title,
+                            overview = movieEntity.overview,
+                            poster = movieEntity.poster,
+                            backdrop = movieEntity.backdrop,
+                            ratings = movieEntity.ratings,
+                            ratingCount = movieEntity.ratingCount,
+                            minimumAge = movieEntity.minimumAge,
+                            like = movieEntity.like,
+                            genres = movieEntity.genres
+                        )
+                    })
+                }
+
+
+                withContext(Dispatchers.Main) {
+                    if (viewModel.isNetworkAvailable(this@MainActivity)) {
+                        val freshMovies = movieRepository.getFreshMovies(apiKey)
+                        viewModel.loadMoviesFromList(freshMovies.map { movieEntity ->
+                            MovieModel(
+                                id = movieEntity.id,
+                                title = movieEntity.title,
+                                overview = movieEntity.overview,
+                                poster = movieEntity.poster,
+                                backdrop = movieEntity.backdrop,
+                                ratings = movieEntity.ratings,
+                                ratingCount = movieEntity.ratingCount,
+                                minimumAge = movieEntity.minimumAge,
+                                like = movieEntity.like,
+                                genres = movieEntity.genres
+                            )
+                        })
+                    }
+                }
+            }
+            if (viewModel.isNetworkAvailable(this@MainActivity)) {
+                viewModel.loadMovies(apiKey)
+                movieRepository.getFreshMovies(apiKey)
+            }
         }
+
         initRecyclerView()
 
         // Наблюдаем за изменениями в данных фильмов
