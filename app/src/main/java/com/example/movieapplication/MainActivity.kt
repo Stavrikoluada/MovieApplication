@@ -3,6 +3,7 @@ package com.example.movieapplication
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,6 +19,7 @@ import com.example.movieapplication.api.provideRetrofit
 import com.example.movieapplication.data.MovieModel
 import com.example.movieapplication.databinding.ActivityMainBinding
 import com.example.movieapplication.db.AppDatabase
+import com.example.movieapplication.db.MovieEntity
 import com.example.movieapplication.repository.MovieRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -110,6 +112,16 @@ class MainActivity : AppCompatActivity() {
                 movieRepository.getFreshMovies(apiKey)
             }
         }
+//        val like: ImageButton = findViewById(R.id.like)
+//        like.setOnClickListener {
+//            if (movieModel.like) {
+//                like.setImageResource(R.drawable.like_red)
+//            } else {
+//                like.setImageResource(R.drawable.like)
+//            }
+//            val newLikeState = !movieModel.like
+//            val updatedMovie = movieModel.copy(like = newLikeState)
+//        }
 
         initRecyclerView()
 
@@ -131,8 +143,26 @@ class MainActivity : AppCompatActivity() {
                 putExtra("MOVIE_BACKDROP", movie.backdrop)
                 putExtra("MOVIE_RATING", movie.ratings)
                 putExtra("MOVIE_RATING_COUNT", movie.ratingCount)
+                viewModel.updateMovieLikeState(movie)
             }
             startActivity(intent)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val updatedMovieEntity = MovieEntity(
+                    id = movie.id,
+                    title = movie.title,
+                    overview = movie.overview,
+                    poster = movie.poster,
+                    backdrop = movie.backdrop,
+                    ratings = movie.ratings,
+                    ratingCount = movie.ratingCount,
+                    minimumAge = movie.minimumAge,
+                    like = movie.like,
+                    genres = movie.genres
+                )
+                val movieDao = AppDatabase.getDatabase(this@MainActivity).movieDao()
+                movieDao.insertMovies(listOf(updatedMovieEntity))
+            }
         }
         binding.rcView.adapter = adapter
     }

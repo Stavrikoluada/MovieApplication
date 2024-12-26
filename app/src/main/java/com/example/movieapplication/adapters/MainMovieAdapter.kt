@@ -30,7 +30,22 @@ class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit) :
             starText.text = "${movieModel.ratingCount} Reviews"
             setStar(movieModel.ratings.toInt())
 
-            root.setOnClickListener { clickListener(movieModel) }
+            if (movieModel.like) {
+                like.setImageResource(R.drawable.like_red)
+            } else {
+                like.setImageResource(R.drawable.like)
+            }
+
+            like.setOnClickListener {
+                val newLikeState = !movieModel.like
+                val updatedMovie = movieModel.copy(like = newLikeState)
+                clickListener(updatedMovie)
+
+            }
+
+            root.setOnClickListener {
+                clickListener(movieModel)
+            }
         }
 
         private fun setStar(starCount: Int) = with(binding) {

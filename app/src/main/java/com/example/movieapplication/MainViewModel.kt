@@ -80,4 +80,12 @@ class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() 
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
     }
+
+    fun updateMovieLikeState(updatedMovie: MovieModel) {
+        val currentList = _movies.value.orEmpty()
+        val updatedList = currentList.map {
+            if (it.id == updatedMovie.id) updatedMovie else it
+        }
+        _movies.postValue(updatedList)
+    }
 }

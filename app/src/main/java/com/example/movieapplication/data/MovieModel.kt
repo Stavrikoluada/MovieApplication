@@ -9,6 +9,6 @@ data class MovieModel(
     val ratings: Float,
     val ratingCount: Long,
     val minimumAge: Boolean,
-    val like: Boolean,
+    val like: Boolean = false,
     val genres: String,
 )
