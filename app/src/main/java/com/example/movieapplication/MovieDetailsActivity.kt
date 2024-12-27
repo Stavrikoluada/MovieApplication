@@ -1,10 +1,12 @@
 package com.example.movieapplication
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +28,7 @@ import com.example.movieapplication.data.ActorsModel
 import com.example.movieapplication.databinding.ActivityMovieDetailsBinding
 import com.example.movieapplication.db.AppDatabase
 import com.example.movieapplication.repository.MovieRepository
+import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +77,16 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         binding.btBack.setOnClickListener {
             finish()
+        }
+
+        // Устанавливаем имя для перехода
+        val transitionName = intent.getStringExtra("movie_container_transition")
+        binding.main.transitionName = transitionName
+
+        // Настройка анимации перехода
+        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+            duration = 500
+            scrimColor = Color.TRANSPARENT
         }
 
         // Инициализируем репозиторий

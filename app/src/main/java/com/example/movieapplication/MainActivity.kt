@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
@@ -21,6 +23,7 @@ import com.example.movieapplication.databinding.ActivityMainBinding
 import com.example.movieapplication.db.AppDatabase
 import com.example.movieapplication.db.MovieEntity
 import com.example.movieapplication.repository.MovieRepository
+import com.google.android.material.transition.platform.MaterialElevationScale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -112,16 +115,6 @@ class MainActivity : AppCompatActivity() {
                 movieRepository.getFreshMovies(apiKey)
             }
         }
-//        val like: ImageButton = findViewById(R.id.like)
-//        like.setOnClickListener {
-//            if (movieModel.like) {
-//                like.setImageResource(R.drawable.like_red)
-//            } else {
-//                like.setImageResource(R.drawable.like)
-//            }
-//            val newLikeState = !movieModel.like
-//            val updatedMovie = movieModel.copy(like = newLikeState)
-//        }
 
         initRecyclerView()
 
@@ -143,29 +136,49 @@ class MainActivity : AppCompatActivity() {
                 putExtra("MOVIE_BACKDROP", movie.backdrop)
                 putExtra("MOVIE_RATING", movie.ratings)
                 putExtra("MOVIE_RATING_COUNT", movie.ratingCount)
+                putExtra("movie_container_transition", "movie_container_${movie.id}")
                 viewModel.updateMovieLikeState(movie)
             }
-            startActivity(intent)
 
-            CoroutineScope(Dispatchers.IO).launch {
-                val updatedMovieEntity = MovieEntity(
-                    id = movie.id,
-                    title = movie.title,
-                    overview = movie.overview,
-                    poster = movie.poster,
-                    backdrop = movie.backdrop,
-                    ratings = movie.ratings,
-                    ratingCount = movie.ratingCount,
-                    minimumAge = movie.minimumAge,
-                    like = movie.like,
-                    genres = movie.genres
-                )
-                val movieDao = AppDatabase.getDatabase(this@MainActivity).movieDao()
-                movieDao.insertMovies(listOf(updatedMovieEntity))
+
+            val container = findViewById<ConstraintLayout>(R.id.main_f)
+            container.transitionName = "movie_container_${movie.id}"
+            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                container, // Элемент для анимации
+                "movie_container_${movie.id}"
+            ).let {
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
+                startActivity(intent, options.toBundle())
             }
+
+                window.exitTransition = MaterialElevationScale(false).apply {
+                    duration = 300
+                }
+
+                window.reenterTransition = MaterialElevationScale(true).apply {
+                    duration = 300
+                }
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val updatedMovieEntity = MovieEntity(
+                        id = movie.id,
+                        title = movie.title,
+                        overview = movie.overview,
+                        poster = movie.poster,
+                        backdrop = movie.backdrop,
+                        ratings = movie.ratings,
+                        ratingCount = movie.ratingCount,
+                        minimumAge = movie.minimumAge,
+                        like = movie.like,
+                        genres = movie.genres
+                    )
+                    val movieDao = AppDatabase.getDatabase(this@MainActivity).movieDao()
+                    movieDao.insertMovies(listOf(updatedMovieEntity))
+                }
+            }
+            binding.rcView.adapter = adapter
         }
-        binding.rcView.adapter = adapter
-    }
 
     companion object {
         const val MOVIE_ID = "MOVIE_ID"

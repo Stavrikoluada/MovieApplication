@@ -35,6 +35,8 @@ class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit) :
             } else {
                 like.setImageResource(R.drawable.like)
             }
+            val container = binding.mainF
+            container.transitionName = "movie_container_${movieModel.id}"
 
             like.setOnClickListener {
                 val newLikeState = !movieModel.like
