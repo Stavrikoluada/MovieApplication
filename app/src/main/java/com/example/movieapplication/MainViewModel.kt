@@ -38,13 +38,10 @@ class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() 
     fun loadMovies(apiKey: String) {
         viewModelScope.launch {
             try {
-                Log.d("MainViewModel", "Loading popular movies...")
                 movieRepository.updateGenresMap(apiKey)
                 val movieList = movieRepository.getPopularMovies(apiKey)
                 _movies.postValue(movieList)
-                Log.d("MainViewModel", "Movies loaded, total count: ${movieList.size}")
             } catch (e: Exception) {
-                // Обработка ошибки, если запрос не удался
                 Log.e("MainViewModel", "Error loading movies", e)
                 val moviesFromDb = movieRepository.getMoviesFromDatabase()
                 _movies.postValue(moviesFromDb.map { movieEntity ->
@@ -75,11 +72,13 @@ class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() 
         }
     }
 
+
     fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
     }
+
 
     fun updateMovieLikeState(updatedMovie: MovieModel) {
         val currentList = _movies.value.orEmpty()

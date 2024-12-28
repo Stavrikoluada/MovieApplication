@@ -25,19 +25,11 @@ class MovieRepository(private val movieApi: MoviesApi, private val movieDao: Mov
 
     suspend fun getMoviesFromDatabase(): List<MovieEntity> {
         val movies = movieDao.getAllMovies()
-        Log.d("MovieRepository", "Loaded ${movies.size} movies from DB")
         return movies
     }
 
     suspend fun saveMoviesToDatabase(movies: List<MovieEntity>) {
-        try {
-            Log.d("MovieRepository", "Saving movies to DB: ${movies.size} movies")
             movieDao.insertMovies(movies)
-            Log.d("MovieRepository", "Movies saved to DB")
-        } catch (e: Exception) {
-            Log.e("MovieRepository", "Error saving movies to DB", e)
-        }
-        Log.d("MovieRepository", "Saving movies to DB: ${movies.size} movies")
     }
 
 
@@ -45,7 +37,6 @@ class MovieRepository(private val movieApi: MoviesApi, private val movieDao: Mov
         val response = movieApi.getActors(id, apiKey)
 
         if (response.cast == null) {
-            Log.e("MovieRepository", "No actors found")
             return emptyList()
         } else {
             return response.cast?.map { actorDto ->
@@ -57,8 +48,8 @@ class MovieRepository(private val movieApi: MoviesApi, private val movieDao: Mov
         }
     }
 
+
     suspend fun getPopularMovies(apiKey: String): List<MovieModel> {
-        // Получаем список популярных фильмов
         val response = movieApi.getPopularMovies(apiKey)
 
         if (response.results == null) {
@@ -89,6 +80,8 @@ class MovieRepository(private val movieApi: MoviesApi, private val movieDao: Mov
         }
         return genreNames.joinToString(", ")
     }
+
+
     suspend fun getFreshMovies(apiKey: String): List<MovieEntity> {
         val movies = getPopularMovies(apiKey).map { movieModel ->
             MovieEntity(

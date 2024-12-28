@@ -26,7 +26,6 @@ class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit) :
             ageFragment.text = "${if (movieModel.minimumAge) 16 else 13}+"
             tvGenreMovie.text = movieModel.genres
             tvTitleFragment.text = movieModel.title
-            //tvTime.text = movieModel.time
             starText.text = "${movieModel.ratingCount} Reviews"
             setStar(movieModel.ratings.toInt())
 
@@ -82,12 +81,10 @@ class MainMovieAdapter(private val clickListener: (MovieModel) -> Unit) :
 
     class MovieDiffCallback : DiffUtil.ItemCallback<MovieModel>() {
         override fun areItemsTheSame(oldItem: MovieModel, newItem: MovieModel): Boolean {
-            // Сравниваем по уникальному идентификатору (например, id или title)
             return oldItem.title == newItem.title
         }
 
         override fun areContentsTheSame(oldItem: MovieModel, newItem: MovieModel): Boolean {
-            // Проверка на одинаковые данные
             return oldItem == newItem
         }
     }

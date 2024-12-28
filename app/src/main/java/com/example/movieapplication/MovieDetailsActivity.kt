@@ -1,16 +1,12 @@
 package com.example.movieapplication
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movieapplication.MainActivity.Companion.MOVIE_BACKDROP
 import com.example.movieapplication.MainActivity.Companion.MOVIE_GENRES
@@ -21,7 +17,6 @@ import com.example.movieapplication.MainActivity.Companion.MOVIE_RATING
 import com.example.movieapplication.MainActivity.Companion.MOVIE_RATING_COUNT
 import com.example.movieapplication.MainActivity.Companion.MOVIE_TITLE
 import com.example.movieapplication.adapters.DetailsActorsAdapter
-//import com.example.movieapplication.api.provideMovieRepository
 import com.example.movieapplication.api.provideMoviesApi
 import com.example.movieapplication.api.provideRetrofit
 import com.example.movieapplication.data.ActorsModel
@@ -85,7 +80,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         // Настройка анимации перехода
         window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-            duration = 500
+            duration = 800
             scrimColor = Color.TRANSPARENT
         }
 
@@ -104,6 +99,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         binding.rvActors.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.rvActors.adapter = actorsAdapter
+
 
         CoroutineScope(Dispatchers.IO).launch {
             if (viewModel.isNetworkAvailable(this@MovieDetailsActivity)) {
@@ -126,6 +122,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         }
     }
 
+
     private fun setStar(starCount: Int) = with(binding) {
         val normCount = starCount / 2
         if (normCount >= 1) {
@@ -144,5 +141,4 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
         }
     }
-
 }
