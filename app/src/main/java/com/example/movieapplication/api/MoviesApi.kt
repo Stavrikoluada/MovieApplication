@@ -16,8 +16,7 @@ interface MoviesApi {
 
     @GET("genre/movie/list")
     suspend fun getPopularMoviesGenres(
-        @Query("api_key") apiKey: String,
-        @Query("language") language: String = "en"
+        @Query("api_key") apiKey: String
     ): ResultGenresDto
 
     @GET("movie/{id}/credits")

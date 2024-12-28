@@ -2,20 +2,14 @@ package com.example.movieapplication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movieapplication.adapters.MainMovieAdapter
-//import com.example.movieapplication.api.provideMovieRepository
 import com.example.movieapplication.api.provideMoviesApi
 import com.example.movieapplication.api.provideRetrofit
 import com.example.movieapplication.data.MovieModel
@@ -55,7 +49,6 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             if (viewModel.isNetworkAvailable(this@MainActivity)) {
-                // Выполняем запрос к API
                 movieRepository.updateGenresMap(apiKey)
             }
 
@@ -63,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             val moviesFromDb = movieRepository.getMoviesFromDatabase()
 
             if (moviesFromDb.isEmpty()) {
-                // Если данных нет в базе, загружаем из API
+                // Если данных в базе нет, загружаем из API
                 withContext(Dispatchers.Main) {
                     if (viewModel.isNetworkAvailable(this@MainActivity)) {
                         viewModel.loadMovies(apiKey)
@@ -153,11 +146,11 @@ class MainActivity : AppCompatActivity() {
             }
 
                 window.exitTransition = MaterialElevationScale(false).apply {
-                    duration = 300
+                    duration = 800
                 }
 
                 window.reenterTransition = MaterialElevationScale(true).apply {
-                    duration = 300
+                    duration = 800
                 }
 
                 CoroutineScope(Dispatchers.IO).launch {
